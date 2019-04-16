@@ -1,0 +1,36 @@
+version: "3.7"
+
+services:
+  app:
+    build: ./server
+    ports:
+      - "8080:8080"
+    environment:
+      - VIRTUAL_HOST=localhost
+    depends_on:
+      - nginx-proxy
+  mongo:
+    image: mongo
+    volumes:
+      - node-data:/data/db
+    ports:
+      - "27017:27017"
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    environment:
+      - DEFAULT_HOST=localhost
+  portainer:
+    image: portainer/portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    ports:
+      - "9000:9000"
+
+volumes:
+  node-data:
+  portainer_data:
